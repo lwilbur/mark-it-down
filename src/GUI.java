@@ -1,43 +1,64 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
- * Contains the two panes, handles Swing window creation and presentation of panes
+ * Contains the two panes, handles Swing window creation and presentation of
+ * panes
  */
-public class GUI {
+public class GUI extends JFrame implements KeyListener {
     RawPane rawPane;            // Holds raw text
     PreviewPane previewPane;    // Holds preview text
-    String rawString;          // Holds full raw string
+    JTextArea test;             // TODO: delete this
 
     public GUI() {
-        // createWindow();
-        initializeRawPane();      // save to variable above
-        initializePreviewPane();  // save to variable above
-        showGUI();                // present GUI to user
+        setupGUI();
+        addComponents();
+        rawPane.addKeyListener(this);
+        pack();
+        setVisible(true);         // show completed GUI
     }
 
-    private RawPane initializeRawPane() {          // plaintext, writable, JTextArea
-        rawPane = null;
-        return rawPane;
+    /**
+     * Set window traits
+     */
+    private void setupGUI() {
+        setTitle("Mark It Down");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Quit when GUI closes
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setPreferredSize(screenSize);                   // Fit to screen
+        setLayout(new GridLayout(1, 2));
     }
 
-    private PreviewPane initializePreviewPane() {  // rendered HTML, only readable, JEditorPane
-        previewPane = null;
-        return previewPane;
+    /**
+     * Add the raw and preview panes, as well as needed buttons, to the window
+     */
+    private void addComponents() {
+        rawPane = new RawPane(this);
+        test = new JTextArea(); // TODO: remove test, add previewPane
+        getContentPane().add(rawPane);
+        getContentPane().add(test);
     }
 
-    private void updatePreview() {
-        previewPane.update(rawString);
-
-        return;
+    /**
+     * Trigger an update of the previewPane, sending it the latest contents of
+     * the rawPane
+     * @param rawString the raw, unrendered markdown string from the rawPane,
+     */
+    private void updatePreview(String rawString) {
+        //previewPane.setText(rawString);  // TODO: uncomment preview, remove test
+        test.setText(rawString);
     }
 
-    private void showGUI() {
-        //TODO
+    @Override
+    public void keyReleased(KeyEvent e) {
+        updatePreview(rawPane.getText());
     }
 
-    public void setRawString(String rawString) {
-        this.rawString = rawString;
-        updatePreview();
-    }
+    @Override
+    public void keyTyped(KeyEvent e) { }
+    @Override
+    public void keyPressed(KeyEvent e) { }
 }
 

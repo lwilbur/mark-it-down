@@ -13,7 +13,6 @@ import java.io.File;
 public class GUI extends JFrame implements KeyListener, ActionListener {
     RawPane rawPane;            // Holds raw text
     PreviewPane previewPane;    // Holds preview text
-    JTextArea test;             // TODO: delete this
 
     public GUI() {
         setupGUI();
@@ -53,9 +52,9 @@ public class GUI extends JFrame implements KeyListener, ActionListener {
      */
     private void addComponents() {
         rawPane = new RawPane(this);
-        test = new JTextArea(); // TODO: remove test, add previewPane
-        getContentPane().add(rawPane);
-        getContentPane().add(test);
+        previewPane = new PreviewPane(this);
+        getContentPane().add(new JScrollPane(rawPane));
+        getContentPane().add(new JScrollPane(previewPane));
     }
 
     /**
@@ -64,8 +63,7 @@ public class GUI extends JFrame implements KeyListener, ActionListener {
      * @param rawString the raw, unrendered markdown string from the rawPane,
      */
     private void updatePreview(String rawString) {
-        //previewPane.setText(rawString);  // TODO: uncomment preview, remove test
-        test.setText(rawString);
+        previewPane.update(rawString);
     }
 
     @Override
@@ -79,7 +77,7 @@ public class GUI extends JFrame implements KeyListener, ActionListener {
             case "Save":  // TODO: make only .txt selectable
                 if (fc.showDialog(this, "Save") == JFileChooser.APPROVE_OPTION) {
                     IO.writeTextFile(fc.getSelectedFile().getPath(),
-                                     test.getText()); // TODO: change to preview pane
+                                     rawPane.getText());
                 }
                 break;
             case "Load":  // TODO: finish loading process
@@ -90,10 +88,9 @@ public class GUI extends JFrame implements KeyListener, ActionListener {
 
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e) { 
         updatePreview(rawPane.getText());
     }
-
     @Override
     public void keyTyped(KeyEvent e) { }
     @Override

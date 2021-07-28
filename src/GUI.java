@@ -36,9 +36,9 @@ public class GUI extends JFrame implements KeyListener {
      */
     private void addComponents() {
         rawPane = new RawPane(this);
-        test = new JTextArea(); // TODO: remove test, add previewPane
-        getContentPane().add(rawPane);
-        getContentPane().add(test);
+        previewPane = new PreviewPane(this);
+        getContentPane().add(new JScrollPane(rawPane));
+        getContentPane().add(new JScrollPane(previewPane));
     }
 
     /**
@@ -47,15 +47,13 @@ public class GUI extends JFrame implements KeyListener {
      * @param rawString the raw, unrendered markdown string from the rawPane,
      */
     private void updatePreview(String rawString) {
-        //previewPane.setText(rawString);  // TODO: uncomment preview, remove test
-        test.setText(rawString);
+        previewPane.update(rawString);
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e) { 
         updatePreview(rawPane.getText());
     }
-
     @Override
     public void keyTyped(KeyEvent e) { }
     @Override

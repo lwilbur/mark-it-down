@@ -1,10 +1,10 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 
 /**
  * Contains the two panes, handles Swing window creation and presentation of
@@ -33,10 +33,13 @@ public class GUI extends JFrame implements KeyListener, ActionListener {
         setPreferredSize(screenSize);                   // Fit to screen
         setLayout(new GridLayout(1, 2));
 
-        // Creating menu bar entries
-        System.setProperty("apple.laf.useScreenMenuBar", "true"); // only works on macs?
-        JMenuBar bar = new JMenuBar();
-        JMenu file = new JMenu("File");
+        // Move menu bar onto top bar, if on a mac
+        if (System.getProperty("os.name").equals("Mac OS X"))
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+        // Create menu bar contents
+        JMenuBar bar   = new JMenuBar();
+        JMenu file     = new JMenu("File");
         JMenuItem save = new JMenuItem("Save");
         JMenuItem load = new JMenuItem("Load");
         save.addActionListener(this);
@@ -67,21 +70,62 @@ public class GUI extends JFrame implements KeyListener, ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent ae) {
         JFileChooser fc = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Markdown Files", "md");
+        fc.setFileFilter(filter);
 
-        String action = e.getActionCommand();
+        String action = ae.getActionCommand();
 
 
         switch (action) {
-            case "Save":  // TODO: make only .txt selectable
+            case "Save":
                 if (fc.showDialog(this, "Save") == JFileChooser.APPROVE_OPTION) {
-                    IO.writeTextFile(fc.getSelectedFile().getPath(),
-                                     rawPane.getText());
+                    try {
+                        String fileName = fc.getSelectedFile().getName();
+                        String fileDir  = fc.getSelectedFile().getParent();
+
+                        // Strip out any extensions added by user
+                        if (fileName.contains("."))
+                            fileName = fileName.substring(0, fileName.indexOf("."));
+
+                        fc.getSelectedFile().getName();
+                        // Add markdown extension
+                        if (!fileName.endsWith(".md"))
+                            fileName += ".md";
+                        IO.writeMarkdownFile(fileDir + "/" + fileName, rawPane.getText());
+                    }
+                    catch (NullPointerException npe) {
+                        String msg = "File selection error.\nPlease select an " +
+                                     "extant file or choose a new file name.";
+                        JOptionPane.showMessageDialog(this,
+                                msg,
+                                "Save Error",
+                                JOptionPane.ERROR_MESSAGE);
+
+                    }
                 }
                 break;
-            case "Load":  // TODO: finish loading process
-                System.out.println("Load " + action + "activated");
+            case "Load":
+                if (fc.showDialog(this, "Load") == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        String filePath = fc.getSelectedFile().getPath();
+                        if (filePath.endsWith(".md"))
+                            rawPane.setText(IO.readMarkdownFile(filePath));
+                        else
+                            throw new Exception("Invalid Vile");
+                    }
+                    catch (Exception e) {
+                        String msg = "File selection error.\nPlease select an" +
+                                " extant .md file.";
+                        JOptionPane.showMessageDialog(this,
+                                msg,
+                                "Load Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+
                 break;
         }
     }

@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.io.IOException;
 
 public class IO {
-    public static String readTextFile(String filepath) {
+    public static String readMarkdownFile(String filepath) {
         String fileContents = "";
 
         try {
@@ -26,7 +26,7 @@ public class IO {
         return fileContents;
     }
 
-    public static int writeTextFile(String filepath, String msg) {
+    public static int writeMarkdownFile(String filepath, String msg) {
         PrintWriter writer;
         try {
             writer = new PrintWriter(filepath);

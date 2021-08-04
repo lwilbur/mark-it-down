@@ -7,7 +7,6 @@ public class RawPane extends JEditorPane {
     public RawPane(GUI gui) {
         this.gui = gui;
         setBackground(Color.PINK);
-        setSelectedTextColor(Color.GREEN);
         setFont(new Font("PT Mono", Font.PLAIN, 16));
     }
 }

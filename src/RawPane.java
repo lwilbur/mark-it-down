@@ -1,19 +1,13 @@
 import javax.swing.*;
+import java.awt.*;
 
-public class RawPane {
-    JTextArea textArea;
+public class RawPane extends JEditorPane {
     GUI gui;
 
     public RawPane(GUI gui) {
         this.gui = gui;
-
-        textArea = new JTextArea();
+        setBackground(Color.PINK);
+        setSelectedTextColor(Color.GREEN);
+        setFont(new Font("PT Mono", Font.PLAIN, 16));
     }
-
-    public void listenerFunction() {   // Will be replaced by swing-based listener function from textArea
-        String getStringFromTextArea = null;
-        gui.setRawString(getStringFromTextArea);
-    }
-
-    // TODO: add listener for change in Raw Pane contents
 }
